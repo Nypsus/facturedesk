@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactureDesk — la boîte de réception, le convertisseur et l'archive 8 ans de vos factures électroniques</title>
+<meta name="description" content="Depuis le 1er septembre 2026, toute entreprise assujettie à la TVA en France doit pouvoir recevoir des factures électroniques structurées (Factur-X, UBL, CII) via une plateforme agréée. FactureDesk les réceptionne, les convertit en lisible et les archive 8 ans — à partir de 9 €/mois.">
+<style>
+:root{--bg:#0e141c;--bg2:#111a24;--card:#16202c;--line:#24344a;--fg:#eaf0f8;--mut:#97a7bd;--acc:#3d8bff;--acc2:#2b6fe0;--acc-soft:rgba(61,139,255,.12);--acc-glow:rgba(61,139,255,.28);--ok:#3ddc97;--bad:#ff5d5d}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.7;overflow-x:hidden}
+main{max-width:1024px;margin:0 auto;padding:40px 22px 80px}
+header{text-align:center;padding:44px 0 12px;position:relative;background:
+  radial-gradient(620px 320px at 50% -120px, rgba(61,139,255,.2), transparent 70%),
+  radial-gradient(420px 220px at 12% 8%, rgba(43,111,224,.12), transparent 70%)}
+.eyebrow{display:inline-block;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;border:1px solid rgba(61,139,255,.4);border-radius:20px;padding:5px 14px;margin-bottom:14px}
+.logo{font-size:1.8rem;font-weight:800;letter-spacing:.5px}
+.logo span{color:var(--acc)}
+h1{font-size:2.05rem;line-height:1.28;margin:16px 0 14px;font-weight:800;max-width:860px;margin-left:auto;margin-right:auto}
+h2{font-size:1.6rem;margin:52px 0 8px;font-weight:800}
+h3{font-size:1.15rem;margin:18px 0 8px}
+p{color:var(--mut);margin:10px 0}
+.sub{font-size:1.06rem;max-width:760px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;margin:24px 0;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.acc{color:var(--acc);font-weight:700}
+.ok{color:var(--ok)}
+.bad{color:var(--bad)}
+.cta{display:inline-block;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:800;border-radius:10px;padding:15px 28px;text-decoration:none;margin:14px 8px 8px 0;font-size:1.02rem;box-shadow:0 6px 22px var(--acc-glow);transition:transform .15s, box-shadow .15s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(61,139,255,.42)}
+.cta.sec{background:transparent;border:1px solid var(--line);color:var(--fg);box-shadow:none}
+form{margin-top:16px}
+label{display:block;font-size:.9rem;color:var(--mut);margin:12px 0 5px}
+input,select,textarea{width:100%;background:#0d1520;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:12px 14px;font-size:1rem}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+button{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:13px 20px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:14px}
+.hint{font-size:.82rem;color:var(--mut)}
+.step{display:grid;grid-template-columns:60px 1fr;gap:16px;align-items:start;margin-top:20px}
+.step:first-child{margin-top:4px}
+.step .ico{width:60px;height:60px;border-radius:16px;background:#0d1520;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step b{display:block;color:var(--fg);margin-bottom:4px;font-size:1.02rem}
+.step span{font-size:.92rem;color:var(--mut)}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 20px;margin:12px 0}
+.faq summary{font-weight:700;cursor:pointer}
+.faq p{margin-top:10px}
+.avis{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 20px;margin:12px 0}
+.avis b{color:var(--fg)}
+.stars{color:#ffb400;letter-spacing:2px}
+footer{margin-top:56px;text-align:center;font-size:.82rem;color:var(--mut)}
+.photo{border-radius:18px;overflow:hidden;border:1px solid var(--line);margin:26px 0;position:relative}
+.photo img{width:100%;height:auto;display:block}
+.photo.dim::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(14,20,28,.72));pointer-events:none}
+.photo.cap::before{content:attr(data-cap);position:absolute;left:20px;bottom:16px;z-index:2;color:#eaf0f8;font-weight:700;font-size:.95rem;text-shadow:0 2px 12px rgba(0,0,0,.7);max-width:80%}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.split .photo{margin:0}
+.optgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:18px 0}
+.opt{background:#0d1520;border:1px solid var(--line);border-radius:13px;padding:16px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt b{display:block;margin-bottom:5px;font-size:.96rem}
+.opt span{font-size:.8rem;color:var(--mut)}
+.opt.on{border-color:var(--acc);background:var(--acc-soft)}
+#risk-out{border:1px solid var(--acc);background:var(--acc-soft);border-radius:14px;padding:18px;margin-top:18px;display:none;text-align:center}
+#risk-total{font-size:1.5rem}
+#risk-detail{font-size:.95rem;margin-top:8px;color:var(--mut);text-align:left}
+#risk-detail li{margin:6px 0 6px 18px}
+.badge{display:inline-block;background:#123b2b;color:var(--ok);border:1px solid #1e5a41;border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:700}
+.stars-in{display:flex;gap:4px;margin:10px 0 4px}
+.stars-in .star{background:transparent;border:none;cursor:pointer;font-size:1.8rem;line-height:1;color:#3a4a5f;padding:2px 4px;transition:color .15s,transform .1s;margin:0}
+.stars-in .star:hover{transform:scale(1.15)}
+.stars-in .star.on{color:#ffb400}
+.stars-in .star:focus{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+.fig{border:1px solid var(--line);background:#0d1520;border-radius:16px;padding:10px;margin:20px 0 4px}
+.fig svg{width:100%;height:auto;display:block}
+.figcap{font-size:.78rem;color:var(--mut);text-align:center;margin:10px 0 2px}
+.herofig{margin:26px auto 8px;max-width:760px}
+.rv{will-change:opacity,transform}
+@media(max-width:720px){h1{font-size:1.55rem}.optgrid{grid-template-columns:1fr}.step{grid-template-columns:50px 1fr;gap:12px}.step .ico{width:50px;height:50px}.split{grid-template-columns:1fr;gap:20px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">Facturation électronique · réception obligatoire depuis le 1<sup>er</sup> septembre 2026 · dès 9 €/mois</div>
+  <div class="logo">Facture<span>Desk</span></div>
+  <h1>Un fournisseur vous envoie une facture électronique que votre ordinateur n'ouvre pas. Pour l'administration, elle est reçue — et le délai d'archive a commencé à courir.</h1>
+
+  <div class="photo dim cap" data-cap="La réception est obligatoire depuis le 1er septembre 2026. Convertir, classer et archiver, c'est ce qui prend vos soirées.">
+    <img src="assets/hero.jpg" alt="Dirigeante d'une petite entreprise devant son ordinateur portable — la réception des factures électroniques au quotidien" loading="eager">
+  </div>
+
+  <p class="sub">Depuis le <b style="color:var(--fg)">1<sup>er</sup> septembre 2026</b>, toute entreprise assujettie à la TVA en France — la micro-entreprise et l'artisan comme la grande société — doit pouvoir <b style="color:var(--fg)">recevoir</b> des factures électroniques structurées (Factur-X, UBL, CII) via une <b style="color:var(--fg)">plateforme agréée</b>. Un PDF par email ne suffit plus comme format d'échange. Résultat : un fichier que votre ordinateur n'ouvre pas, des mentions obligatoires à retrouver à la main, et une <b style="color:var(--fg)">archive à conserver huit ans</b> dans sa forme d'origine. <b style="color:var(--fg)">FactureDesk est la boîte de réception, le convertisseur et l'archive — pour les entreprises qui n'ont pas d'équipe comptable.</b></p>
+
+  <p class="rv"><a class="cta" href="#demo">Vérifier ma situation — gratuit</a> <a class="cta sec" href="#pricing">Voir les tarifs</a></p>
+</header>
+
+<div class="split">
+  <div class="rv">
+    <div style="font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:6px">Exemple concret</div>
+    <h3 style="margin-top:0">Une menuiserie à deux personnes, 30 factures fournisseurs par mois.</h3>
+    <p>Prenons une menuiserie de deux personnes. Elle reçoit une trentaine de factures fournisseurs par mois : tantôt un XML qu'aucun logiciel n'ouvre, tantôt un PDF, souvent un scan ou une photo de papier. Personne ne les traite « à la chaîne » : on ouvre, on vérifie, on renomme, on classe — <b style="color:var(--fg)">environ 8 minutes par facture</b>, le soir, entre deux chantiers.</p>
+    <p>Trente factures × 8 minutes, c'est <b style="color:var(--fg)">4 heures par mois</b>, soit <b style="color:var(--fg)">48 heures par an</b>. Au tarif d'une heure d'administratif facturée 25 €, ce travail « invisible » coûte <b style="color:var(--fg)">1 200 € par an</b> — sans compter les rattrapages. Et côté conformité : la facture non conforme ou reçue hors plateforme agréée est sanctionnée <b style="color:var(--fg)">50 € par facture</b>, tandis que l'original structuré doit rester conservé <b style="color:var(--fg)">8 ans</b> — un dossier imprimé ne remplace pas l'original.</p>
+    <p class="acc">FactureDesk : la facture électronique arrive via votre plateforme agréée, les PDF et scans par une adresse de réception dédiée. Tout est converti en document lisible, les mentions obligatoires sont extraites, et l'original est archivé 8 ans. À partir de 9 €/mois, soit 108 €/an face aux 1 200 € de temps perdu.</p>
+  </div>
+  <div class="photo rv">
+    <img src="assets/documents.jpg" alt="Signature et classement de documents comptables — la partie réception et archive de la facture électronique" loading="lazy">
+  </div>
+</div>
+
+<h2>Comment ça marche</h2>
+<div class="card rv">
+  <div class="step">
+    <div class="ico">
+      <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="étape 1 : recevoir sur une seule adresse">
+        <rect x="8" y="10" width="32" height="28" rx="4" fill="none" stroke="#3d8bff" stroke-width="2.4"/>
+        <path d="M8 18 L24 25 L40 18" fill="none" stroke="#3d8bff" stroke-width="2.4"/>
+        <path d="M16 30 H 32" stroke="#9aa7b4" stroke-width="2.4"/>
+      </svg>
+    </div>
+    <div><b>1 · Recevoir, sur une seule adresse</b><span>Une adresse de réception dédiée pour tout ce qui arrive encore en PDF, scan ou photo, et un branchement à votre plateforme agréée pour les factures structurées. Un seul endroit, quel que soit le fournisseur.</span></div>
+  </div>
+  <div class="step">
+    <div class="ico">
+      <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="étape 2 : convertir en lisible">
+        <path d="M12 10 L28 10 L36 18 L36 38 L12 38 Z" fill="none" stroke="#3d8bff" stroke-width="2.4"/>
+        <path d="M28 10 L28 18 L36 18" fill="none" stroke="#3d8bff" stroke-width="2.4"/>
+        <path d="M17 24 H 31 M17 30 H 27" stroke="#9aa7b4" stroke-width="2.2"/>
+      </svg>
+    </div>
+    <div><b>2 · Convertir en document lisible</b><span>Le Factur-X, l'UBL ou le CII est converti en PDF que vous pouvez ouvrir, et les mentions obligatoires (fournisseur, SIREN, TVA, montants, échéance) sont extraites automatiquement. Vous ne ressaisissez plus rien.</span></div>
+  </div>
+  <div class="step">
+    <div class="ico">
+      <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="étape 3 : archiver huit ans et exporter">
+        <rect x="8" y="8" width="32" height="32" rx="4" fill="none" stroke="#3d8bff" stroke-width="2.4"/>
+        <path d="M16 20 L24 27 L34 15" fill="none" stroke="#3ddc97" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div><b>3 · Archiver 8 ans, puis exporter</b><span>L'original structuré est conservé intact et horodaté pendant huit ans, avec recherche par fournisseur, montant ou période. Votre expert-comptable reçoit un export mensuel propre — ou vous gardez tout de votre côté.</span></div>
+  </div>
+</div>
+
+<div class="card rv" id="demo">
+  <h2 style="margin-top:0">Vérification gratuite — ce que votre réception vous coûte déjà</h2>
+  <p class="hint">Indiquez ce que vous recevez réellement aujourd'hui et le temps que ça vous prend. FactureDesk calcule le coût annuel de votre traitement manuel, et ce qu'il vous en reste avec l'abonnement.</p>
+  <div class="optgrid" id="grid">
+    <div class="opt on" data-share="0.9"><b>Presque toutes</b><span>mes fournisseurs m'envoient encore des PDF, des scans ou des photos</span></div>
+    <div class="opt" data-share="0.5"><b>Environ la moitié</b><span>le reste arrive déjà en facture électronique</span></div>
+    <div class="opt" data-share="0.2"><b>Quelques-unes seulement</b><span>la plupart arrive déjà en structuré</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px">
+    <div>
+      <label for="vol">Factures reçues par mois</label>
+      <input id="vol" type="number" value="30" min="1" step="1">
+    </div>
+    <div>
+      <label for="mins">Minutes par facture (ouvrir, vérifier, classer)</label>
+      <input id="mins" type="number" value="8" min="0" step="1">
+    </div>
+  </div>
+  <label for="rate">Ce que vaut une heure de votre temps (€/h)</label>
+  <input id="rate" type="number" value="25" min="1" step="1">
+  <button onclick="run()">Calculer mon coût de réception</button>
+  <div id="risk-out">
+    <div class="badge">D'après ce que vous recevez</div>
+    <div class="bad" id="risk-total" style="font-size:1.4rem;margin-top:6px">—</div>
+    <p id="risk-detail" style="text-align:left"></p>
+    <p class="acc" style="margin-top:10px" id="risk-cta">—</p>
+  </div>
+</div>
+
+<div class="card rv">
+  <b>Ce que « recevoir » veut dire depuis le 1<sup>er</sup> septembre 2026</b>
+  <div class="fig">
+    <svg viewBox="0 0 700 210" role="img" aria-label="Deux entrées — factures structurées via plateforme agréée et PDF par email — une conversion lisible, une archive de huit ans et un export comptable">
+      <rect width="700" height="210" rx="14" fill="#0b1016"/>
+      <g font-family="Segoe UI,sans-serif">
+        <rect x="26" y="36" width="150" height="62" rx="10" fill="#16202c" stroke="#3a4a5f"/>
+        <text x="101" y="62" text-anchor="middle" font-size="12" fill="#eaf0f8">📥 Factur-X / UBL / CII</text>
+        <text x="101" y="82" text-anchor="middle" font-size="10.5" fill="#97a7bd">plateforme agréée</text>
+        <rect x="26" y="126" width="150" height="62" rx="10" fill="#16202c" stroke="#3a4a5f"/>
+        <text x="101" y="152" text-anchor="middle" font-size="12" fill="#eaf0f8">📄 PDF / scans</text>
+        <text x="101" y="172" text-anchor="middle" font-size="10.5" fill="#97a7bd">adresse de réception dédiée</text>
+        <rect x="238" y="62" width="150" height="62" rx="10" fill="#16202c" stroke="#3a4a5f"/>
+        <text x="313" y="88" text-anchor="middle" font-size="12" fill="#eaf0f8">🔎 Conversion lisible</text>
+        <text x="313" y="108" text-anchor="middle" font-size="10.5" fill="#97a7bd">PDF + mentions extraites</text>
+        <rect x="450" y="62" width="160" height="62" rx="10" fill="#16202c" stroke="#3a4a5f"/>
+        <text x="530" y="88" text-anchor="middle" font-size="12" fill="#eaf0f8">🗄️ Archive 8 ans</text>
+        <text x="530" y="108" text-anchor="middle" font-size="10.5" fill="#97a7bd">original intact + export</text>
+      </g>
+      <path d="M176 67 L238 67 M176 157 L322 157 L322 124" stroke="#3a4a5f" stroke-width="2" fill="none"/>
+      <path d="M388 93 L450 93" stroke="#3a4a5f" stroke-width="2"/>
+      <rect x="214" y="180" width="282" height="22" rx="11" fill="#3d8bff"/>
+      <text x="355" y="195" text-anchor="middle" font-size="13" font-weight="800" fill="#ffffff">vos factures reçues, enfin lisibles et archivées</text>
+    </svg>
+    <p class="figcap">La réforme a créé un format que les petites structures ne savent pas lire. FactureDesk le rend lisible et l'archive avant qu'il ne devienne un problème.</p>
+  </div>
+  <p class="hint">Repères : France — réception obligatoire pour toutes les entreprises assujetties à la TVA depuis le 1<sup>er</sup> septembre 2026, émission au 1<sup>er</sup> septembre 2027 ; amende de 50 € par facture non conforme et 500 € par transmission d'e-reporting manquante (loi de finances de février 2026). Allemagne — réception obligatoire pour tous les échanges B2B depuis le 1<sup>er</sup> janvier 2025, avec conservation de l'original structuré pendant 8 ans. Espagne — Verifactu obligatoire au 1<sup>er</sup> janvier 2027. Sources : e-invoicing.org, economie.gouv.fr, Avalara.</p>
+</div>
+
+<h2 id="pricing">Tarifs</h2>
+<div class="card rv">
+  <b>Essentiel — 9 €/mois</b>
+  <p>1 entreprise. Adresse de réception + branchement à votre plateforme agréée, jusqu'à 50 factures reçues par mois, conversion en document lisible, extraction des mentions obligatoires, archive 8 ans et export mensuel.</p>
+  <p class="hint">Pour la micro-entreprise, l'artisan et l'indépendant qui reçoivent des factures et ne veulent plus y passer leurs soirées. Moins de 3 € par semaine : c'est le prix de dix minutes de votre temps.</p>
+  <p><a class="cta" href="https://buy.stripe.com/7sYdR28pR29Zg5H43t3sI0A" rel="noopener" target="_blank">💳 S'abonner à Essentiel — 9 €/mois</a></p>
+</div>
+<div class="card rv">
+  <b>Pro — 15 €/mois</b>
+  <p>Factures illimitées, jusqu'à 3 utilisateurs, recherche plein texte dans l'archive, relances fournisseurs pour les factures non conformes, et export prêt à déposer dans l'outil de votre cabinet.</p>
+  <p class="hint">Pour les structures qui reçoivent beaucoup, ou qui veulent que leur expert-comptable reparte avec un export propre chaque mois sans rien ressaisir. L'émission électronique vous attend au 1<sup>er</sup> septembre 2027 — le jour où elle arrive, votre réception est déjà en ordre.</p>
+  <p><a class="cta" href="https://buy.stripe.com/6oU28k6hJ29Zf1DeI73sI0B" rel="noopener" target="_blank">💳 S'abonner à Pro — 15 €/mois</a></p>
+</div>
+<div class="card rv">
+  <h3 style="margin-top:0">L'archive qui tient huit ans</h3>
+  <p>Chaque facture reçue garde son original structuré, horodaté, avec ses données extraites à côté. Vous retrouvez une facture par fournisseur, par montant ou par période — même trois ans plus tard, quand le contrôle arrive.</p>
+  <div class="fig">
+    <svg viewBox="0 0 700 150" role="img" aria-label="Chronologie de conservation : une facture reçue en 2026 reste archivée et retrouvable jusqu'en 2034">
+      <rect width="700" height="150" rx="14" fill="#0b1016"/>
+      <path d="M60 92 H640" stroke="#24344a" stroke-width="3"/>
+      <circle cx="60" cy="92" r="9" fill="#3d8bff"/>
+      <circle cx="640" cy="92" r="9" fill="#3d8bff"/>
+      <g font-family="Segoe UI,sans-serif" fill="#eaf0f8">
+        <text x="60" y="66" text-anchor="middle" font-size="13" font-weight="800">2026</text>
+        <text x="640" y="66" text-anchor="middle" font-size="13" font-weight="800">2034</text>
+      </g>
+      <g font-family="Segoe UI,sans-serif" fill="#97a7bd" font-size="10.5">
+        <text x="60" y="118" text-anchor="middle">facture reçue</text>
+        <text x="640" y="118" text-anchor="middle">fin de la conservation</text>
+      </g>
+      <rect x="196" y="120" width="308" height="22" rx="11" fill="#16202c" stroke="#3a4a5f"/>
+      <text x="350" y="135" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3ddc97">original intact · recherchable à tout moment</text>
+    </svg>
+    <p class="figcap">Huit ans, c'est long pour un tiroir. C'est court pour une archive qui se cherche en trois clics.</p>
+  </div>
+</div>
+
+<h2>Questions fréquentes</h2>
+<div class="faq">
+  <details><summary>Je suis une micro-entreprise : suis-je vraiment concerné dès maintenant ?</summary>
+  <p>Pour la réception, oui — sans exception de taille. Depuis le 1<sup>er</sup> septembre 2026, toute entreprise assujettie à la TVA en France, y compris une micro-entreprise, doit être en mesure de recevoir une facture électronique structurée via une plateforme agréée. L'obligation d'émettre et le e-reporting vous concernent au 1<sup>er</sup> septembre 2027.</p></details>
+  <details><summary>Concrètement, qu'est-ce que je dois faire ?</summary>
+  <p>Deux choses : choisir une plateforme agréée (l'annuaire officiel en compte une centaine) et pouvoir ouvrir et conserver ce qui en sort. FactureDesk prend la seconde partie — et sert aussi de boîte pour tout ce qui continue d'arriver en PDF par email. Si vous n'avez pas encore choisi de plateforme, nous le faisons avec vous à la mise en route.</p></details>
+  <details><summary>Qu'est-ce qu'une « plateforme agréée » ? Le portail public ne suffit pas ?</summary>
+  <p>La plateforme agréée est un prestataire immatriculé par l'État, seul habilité à transmettre vos flux à l'administration. Le portail public de facturation est devenu un annuaire : il n'échange plus de factures. Chaque entreprise doit donc avoir la sienne. FactureDesk se branche au-dessus de celle que vous choisissez — nous ne la remplaçons pas.</p></details>
+  <details><summary>Mes fournisseurs m'envoient encore des PDF et des scans. C'est un problème ?</summary>
+  <p>Pour la conformité, le PDF seul n'est plus un format d'échange valable depuis le 1<sup>er</sup> septembre 2026. Dans les faits, vos fournisseurs vont continuer à vous envoyer des PDF et des photos pendant des mois. C'est exactement pour ça que FactureDesk a une adresse de réception : le structuré d'un côté, le reste de l'autre, tout dans la même archive.</p></details>
+  <details><summary>Quelles sont les sanctions si je ne fais rien ?</summary>
+  <p>Facture non transmise au format électronique : 50 € par facture. E-reporting manquant : 500 € par transmission. L'absence de plateforme agréée est sanctionnée après mise en demeure. Le « droit à l'erreur » annoncé pour 2026-2027 suspend la sanction si vous régularisez — il ne l'annule pas.</p></details>
+  <details><summary>L'archive de huit ans, c'est obligatoire en France aussi ?</summary>
+  <p>La conservation de l'original structuré pendant huit ans est explicitement exigée en Allemagne depuis 2025, et c'est la durée de référence retenue par la plupart des plateformes agréées en Europe, cohérente avec les obligations comptables françaises. Un tirage papier ou une capture d'écran ne remplace pas l'original : FactureDesk conserve le fichier d'origine.</p></details>
+  <details><summary>Est-ce que ça remplace mon expert-comptable ?</summary>
+  <p>Non. FactureDesk fait la réception, la conversion et l'archive ; l'expert-comptable garde la comptabilité et le conseil. En formule Pro, il reçoit un export mensuel prêt à intégrer — c'est du temps de ressaisie en moins pour tout le monde.</p></details>
+  <details><summary>Peut-on annuler ?</summary>
+  <p>Oui — mensuel, sans engagement, annulation en un clic depuis la page de paiement Stripe. Les données restent exportables pendant la période d'archive.</p></details>
+</div>
+
+<div class="card rv">
+  <h3 style="margin-top:0">⭐ Avis clients</h3>
+  <div id="reviews"></div>
+  <hr style="border-color:var(--line);margin:18px 0">
+  <p class="hint">Vous testez FactureDesk ? Laissez un avis (il part directement à notre équipe) :</p>
+  <form id="revform" onsubmit="return sendReview(event)" style="margin-top:6px">
+    <label>Note (1-5)</label>
+    <div class="stars-in" id="rv_stars" role="radiogroup" aria-label="Note">
+      <button type="button" class="star" data-v="1" aria-label="1 étoile">☆</button>
+      <button type="button" class="star" data-v="2" aria-label="2 étoiles">☆</button>
+      <button type="button" class="star" data-v="3" aria-label="3 étoiles">☆</button>
+      <button type="button" class="star" data-v="4" aria-label="4 étoiles">☆</button>
+      <button type="button" class="star" data-v="5" aria-label="5 étoiles">☆</button>
+      <input type="hidden" id="rv_score" value="5">
+    </div>
+    <p class="hint" id="rv_star_hint">Cliquez sur une étoile pour la remplir — 5 = excellent.</p>
+    <label>Votre email</label>
+    <input type="email" id="rv_email" placeholder="vous@votreentreprise.fr" required>
+    <label>Votre commentaire</label>
+    <textarea id="rv_comment" rows="3" style="width:100%;background:#0d1520;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:12px" placeholder="Ce qui a fonctionné, ce qui manque…"></textarea>
+    <button type="submit">Envoyer mon avis</button>
+    <p class="hint" id="revok"></p>
+  </form>
+</div>
+
+<div class="card rv" id="start">
+  <h3 style="margin-top:0">Commencer maintenant</h3>
+  <p>La vérification ci-dessus est gratuite et prend trente secondes. L'abonnement démarre à 9 €/mois, payé de façon sécurisée par carte via Stripe. Vous préférez en parler d'abord ? Nous répondons sous 24 h ouvrées :</p>
+  <p style="margin:18px 0"><a class="cta" href="https://buy.stripe.com/7sYdR28pR29Zg5H43t3sI0A" rel="noopener" target="_blank">💳 S'abonner à Essentiel — 9 €/mois</a></p>
+  <p class="hint">Un souci de paiement ou une question ? Écrivez-nous — réponse sous 24 h ouvrées :</p>
+  <form id="signform" onsubmit="return signup(event)" style="margin-top:8px">
+    <label>Votre email</label>
+    <input type="email" id="se" placeholder="vous@votreentreprise.fr" required>
+    <label>Votre structure (micro-entreprise, artisan, TPE…)</label>
+    <input type="text" id="sp" placeholder="Menuiserie — 2 personnes">
+    <label>Votre situation aujourd'hui</label>
+    <input type="text" id="sa" placeholder="Je reçois des PDF par mail, pas encore de plateforme agréée">
+    <button type="submit">Je préfère être recontacté</button>
+    <p class="hint" id="signok"></p>
+  </form>
+</div>
+
+<footer>FactureDesk — la boîte de réception, le convertisseur et l'archive des factures électroniques pour les micro-entreprises et les artisans. Sources : e-invoicing.org, economie.gouv.fr, Avalara. · <a href="mailto:nypsus.business@gmail.com" style="color:var(--mut)">Contact</a></footer>
+</main>
+<script>
+function money(n){return n.toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0})}
+function normNum(s){
+  return parseFloat(String(s).replace(/[\s\u00a0\u202f\u2009]/g,'').replace(',','.'))||0;
+}
+function run(){
+  var chosen=document.querySelector('#grid .opt.on');
+  if(!chosen){
+    alert("Indiquez la part de vos factures qui arrive encore en PDF ou en scan.");
+    return;
+  }
+  var share=parseFloat(chosen.getAttribute('data-share'))||0;
+  var vol=Math.max(1,Math.round(normNum(document.getElementById('vol').value)));
+  var mins=Math.max(0,normNum(document.getElementById('mins').value));
+  var rate=Math.max(1,normNum(document.getElementById('rate').value));
+  var hours=Math.round(vol*share*mins/60*12);
+  var euros=Math.round(hours*rate/5)*5;
+  var sub=108;
+  var perYear=Math.round(vol*12);
+  var out=document.getElementById('risk-out');
+  out.style.display='block';
+  document.getElementById('risk-total').textContent=euros+' €/an de traitement manuel';
+  var pct=Math.round(share*100);
+  var detail='<ul>';
+  detail+='<li>D\u2019après votre réponse, environ '+pct+' % de vos '+vol+' factures mensuelles passent encore par vos mains, soit ~'+hours+' h par an.</li>';
+  detail+='<li>À '+money(rate)+'/h, ce temps vaut <b style="color:#eaf0f8">'+money(euros)+' par an</b> — sans compter les erreurs de saisie et les relances de fournisseurs.</li>';
+  detail+='<li>Ces '+perYear+' factures par an devront aussi rester archivées <b style="color:#eaf0f8">8 ans</b> dans leur forme d\u2019origine.</li>';
+  if(share>=0.5){
+    detail+='<li>Une facture non transmise au bon format est sanctionnée 50 € — jusqu\u2019à <b style="color:#eaf0f8">'+money(50*vol*share*12)+' par an</b> si ça arrivait sur toute cette part.</li>';
+  }
+  detail+='</ul><p style="margin-left:18px;margin-top:6px">Avec FactureDesk, la réception, la conversion et l\u2019archive se font toutes seules — c\u2019est ce temps-là qu\u2019on vous rend, dès ce mois-ci.</p>';
+  document.getElementById('risk-detail').innerHTML=detail;
+  var net=Math.max(0,euros-sub);
+  document.getElementById('risk-cta').innerHTML='Votre réception outillée à 9 €/mois (108 €/an) : il vous reste <b style="color:#eaf0f8">'+money(net)+' par an</b> de temps récupéré.<br><a class="cta" style="margin:8px 0 0" href="https://buy.stripe.com/7sYdR28pR29Zg5H43t3sI0A" rel="noopener" target="_blank">Outiller ma réception</a>';
+}
+[].slice.call(document.querySelectorAll('#grid .opt')).forEach(function(o){
+  o.addEventListener('click',function(){
+    [].slice.call(document.querySelectorAll('#grid .opt')).forEach(function(x){ x.classList.remove('on'); });
+    o.classList.add('on');
+    run();
+  });
+});
+['vol','mins','rate'].forEach(function(id){
+  document.getElementById(id).addEventListener('input',run);
+});
+/* étoiles cliquables */
+(function(){
+  var box=document.getElementById('rv_stars');
+  var hidden=document.getElementById('rv_score');
+  var hint=document.getElementById('rv_star_hint');
+  var stars=box.querySelectorAll('.star');
+  function paint(v){
+    stars.forEach(function(st,i){ if(i<v) st.classList.add('on'); else st.classList.remove('on'); });
+    hidden.value=v;
+    hint.textContent='Note : '+v+'/5.';
+  }
+  stars.forEach(function(st){
+    st.addEventListener('click',function(){ paint(parseInt(st.getAttribute('data-v'),10)); });
+  });
+  paint(5);
+})();
+function sendReview(e){
+  e.preventDefault();
+  var score=document.getElementById('rv_score').value;
+  var email=document.getElementById('rv_email').value.trim();
+  var comment=document.getElementById('rv_comment').value.trim();
+  if(!comment){ alert('Écrivez un court commentaire.'); return false; }
+  var subj=encodeURIComponent('Avis FactureDesk — '+score+'/5');
+  var body=encodeURIComponent('Note : '+score+'/5\n\n'+comment+'\n\n— '+email);
+  window.location.href='mailto:nypsus.business@gmail.com?subject='+subj+'&body='+body;
+  document.getElementById('rv_email').value='';
+  document.getElementById('rv_comment').value='';
+  document.getElementById('revok').textContent="Votre email d'avis a été ouvert — merci.";
+  return false;
+}
+function signup(e){
+  e.preventDefault();
+  var email=document.getElementById('se').value.trim();
+  var sp=document.getElementById('sp').value.trim();
+  var sa=document.getElementById('sa').value.trim();
+  var subj=encodeURIComponent('FactureDesk — contact');
+  var body=encodeURIComponent('Email : '+email+'\nStructure : '+sp+'\nSituation : '+sa+'\n\nJe préfère être contacté avant de m\u2019abonner.');
+  window.location.href='mailto:nypsus.business@gmail.com?subject='+subj+'&body='+body;
+  document.getElementById('se').value='';
+  document.getElementById('sp').value='';
+  document.getElementById('sa').value='';
+  document.getElementById('signok').textContent='Votre email a été ouvert — nous répondrons sous 24 h ouvrées.';
+  return false;
+}
+/* scroll reveal progressif (fallback 4s, reduced-motion respecté) */
+(function(){
+  var els=[].slice.call(document.querySelectorAll('.rv'));
+  var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced||!('IntersectionObserver' in window)){
+    els.forEach(function(el){ el.style.opacity='1'; el.style.transform='none'; });
+    return;
+  }
+  els.forEach(function(el){ el.style.opacity='0'; el.style.transform='translateY(14px)'; el.style.transition='opacity .6s ease, transform .6s ease'; });
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.style.opacity='1'; en.target.style.transform='none'; io.unobserve(en.target); } });
+  },{threshold:.08});
+  els.forEach(function(el){ io.observe(el); });
+  setTimeout(function(){
+    els.forEach(function(el){ el.style.opacity='1'; el.style.transform='none'; });
+  },4000);
+})();
+</script>
+</body>
+</html>
