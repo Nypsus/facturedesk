@@ -116,6 +116,32 @@ header>*{position:relative;z-index:1}
 .card{position:relative}
 #steps{position:relative;z-index:1}
 #receive{position:relative;z-index:2}
+/* ===================== AMPLIFICATION — mouvement franc ===================== */
+/* révélation de section : masque + montée marquée + légère rotation */
+.rv{will-change:opacity,transform,clip-path;opacity:0;transform:translateY(58px) rotate(-1.5deg) scale(.982);clip-path:inset(0 0 26% 0 round 12px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .9s cubic-bezier(.22,.61,.36,1),clip-path .9s cubic-bezier(.22,.61,.36,1)}
+.rv.in{opacity:1;transform:none;clip-path:inset(0 0 0 0 round 0px)}
+/* cartes : entrée décalée + rotation, origine à gauche */
+.card.rv{transform:translateY(78px) rotate(-1.7deg) scale(.96);transform-origin:left center}
+.card.rv.in{transform:none}
+/* images : masque qui se lève + léger agrandissement */
+.photo.rv{transform:translateY(46px) scale(1.05);clip-path:inset(0 0 100% 0 round 18px)}
+.photo.rv.in{transform:none;clip-path:inset(0 0 0 0 round 18px)}
+/* cascade de texte : montée + rotation */
+.rv-stagger>*{opacity:0;transform:translateY(36px) rotate(-.9deg);transition:opacity .6s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
+.rv-stagger.in>*{opacity:1;transform:none}
+.rv-stagger.in>*:nth-child(2){transition-delay:.09s}
+.rv-stagger.in>*:nth-child(3){transition-delay:.18s}
+.rv-stagger.in>*:nth-child(4){transition-delay:.27s}
+/* ---- bande horizontale pilotée par le scroll ---- */
+.hband{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;margin:26px 0 6px;border-radius:18px;border:1px solid var(--line);background:#0d1520;scrollbar-width:none}
+.hband::-webkit-scrollbar{display:none}
+.hband-track{display:flex;gap:16px;padding:16px;width:max-content;will-change:transform}
+.hb-item{flex:0 0 auto;width:min(74vw,420px);margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);position:relative;background:#0b1016;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.hb-item img{width:100%;height:280px;object-fit:cover;display:block}
+.hb-item.wide{width:min(88vw,660px)}
+.hb-item figcaption{position:absolute;left:16px;bottom:12px;right:16px;z-index:2;font-size:.84rem;font-weight:700;color:#eaf0f8;text-shadow:0 2px 12px rgba(0,0,0,.85);max-width:88%}
+.hb-item::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(11,16,22,.78))}
+@media(max-width:720px){.hb-item img{height:205px}}
 </style>
 <noscript><style>.rv,.rv-stagger>*{opacity:1!important;transform:none!important;clip-path:none!important}#prog{display:none}</style></noscript>
 </head>
@@ -299,12 +325,30 @@ header>*{position:relative;z-index:1}
 </div>
 
 <h2>Ce que vous recevez concrètement</h2>
-<div class="card rv">
+<div class="card rv" id="conv-card">
   <p>Regardez une facture d'artisan de bout en bout. À gauche, le fichier Factur-X/UBL tel qu'il arrive : un XML que votre ordinateur n'ouvre pas. À droite, le même document converti en facture lisible, mentions extraites. En dessous, l'archive où l'original est conservé intact et retrouvé en trois clics — huit ans durant.</p>
   <div class="photo">
     <img src="assets/livrable-conversion.png" alt="Exemple : à gauche un fichier Factur-X/UBL illisible, à droite la même facture convertie en document lisible par FactureDesk, et en dessous l'archive 8 ans recherchable" loading="lazy">
   </div>
   <p class="figcap">EXEMPLE — facture d'Atelier Lumen (données fictives). Avant / après la conversion, et l'archive qui conserve l'original huit ans.</p>
+</div>
+
+<h2>Le parcours de réception, en images</h2>
+<div class="hband" id="hband" aria-label="Galerie : de la réception à l'archive">
+  <div class="hband-track">
+    <figure class="hb-item">
+      <img src="assets/hero.jpg" alt="Réception des factures électroniques au quotidien" loading="lazy">
+      <figcaption>1 · Recevoir — structuré, PDF, scan et photo au même endroit</figcaption>
+    </figure>
+    <figure class="hb-item">
+      <img src="assets/documents.jpg" alt="Classement et signature de documents comptables" loading="lazy">
+      <figcaption>2 · Classer — mentions extraites, plus rien à ressaisir</figcaption>
+    </figure>
+    <figure class="hb-item wide">
+      <img src="assets/livrable-conversion.png" alt="À gauche le Factur-X illisible, à droite la facture convertie en document lisible" loading="lazy">
+      <figcaption>3 · Convertir — le XML illisible devient une facture lisible</figcaption>
+    </figure>
+  </div>
 </div>
 
 <h2 id="pricing">Tarifs</h2>
@@ -585,7 +629,7 @@ function animateTo(el,to,fmt,dur){
           var r=img.parentNode.getBoundingClientRect();
           if(r.bottom<-60||r.top>vh+60) return;
           var mid=r.top+r.height/2-vh/2, f=Math.max(-1,Math.min(1,mid/vh));
-          img.style.transform='translate3d(0,'+(-f*16).toFixed(2)+'px,0) scale(1.06)';
+          img.style.transform='translate3d(0,'+(-f*22).toFixed(2)+'px,0) scale(1.2)';
         });
       }
       if(glow){ var gi=Math.max(0,1-y/700); glow.style.setProperty('--gi',(0.10+0.15*gi).toFixed(3)); }
@@ -602,35 +646,76 @@ function animateTo(el,to,fmt,dur){
     glowPointer();
   }
 
-  /* ---------- moteur Asgard : GSAP + ScrollTrigger + Lenis ---------- */
+  /* ---------- moteur : GSAP + ScrollTrigger + Lenis ---------- */
   function engine(){
     var g=window.gsap, ST=window.ScrollTrigger;
     g.registerPlugin(ST);
-    g.defaults({ease:'power3.out',duration:.85});
+    g.defaults({ease:'power3.out',duration:.9});
     doc.style.scrollBehavior='auto';
 
     /* Lenis : défilement fluide, son RAF dans le ticker GSAP (synchro ScrollTrigger) */
-    var lenis=new window.Lenis({lerp:.09,smoothWheel:true,wheelMultiplier:.9,anchors:true});
+    var lenis=new window.Lenis({lerp:.09,smoothWheel:true,wheelMultiplier:.95,anchors:true});
     window.__fdkLenis=lenis;
     lenis.on('scroll',ST.update);
     g.ticker.add(function(t){ lenis.raf(t*1000); ST.update(); });
     g.ticker.lagSmoothing(0);
 
-    /* révélation par masque (clip-path) en cascade — un déclencheur par élément,
-       fiable quel que soit le saut de scroll (les batches en rataient) */
+    /* une fois révélé, on coupe les transitions CSS d'un élément pour que GSAP
+       puisse le transformer en scrub sans que le CSS ne lisse chaque frame */
+    function clearTransition(el){
+      el.addEventListener('transitionend',function h(ev){
+        if(ev.propertyName==='transform'){ el.style.transition='none'; el.removeEventListener('transitionend',h); }
+      });
+      setTimeout(function(){ el.style.transition='none'; },1500);
+    }
+
+    /* 1 — révélation par masque (clip-path) en cascade, via CSS .rv */
     g.utils.toArray('.rv').forEach(function(el){
       var sib=[].slice.call(el.parentNode.children).filter(function(x){ return x.classList.contains('rv'); }).indexOf(el);
-      ST.create({trigger:el,start:'top 88%',once:true,onEnter:function(){
-        el.style.transitionDelay=(Math.max(0,Math.min(sib,4))*80)+'ms';
+      ST.create({trigger:el,start:'top 86%',once:true,onEnter:function(){
+        el.style.transitionDelay=(Math.max(0,Math.min(sib,4))*85)+'ms';
         el.classList.add('in');
+        clearTransition(el);
       }});
     });
     g.utils.toArray('.rv-stagger').forEach(function(el){
       ST.create({trigger:el,start:'top 88%',once:true,onEnter:function(){ el.classList.add('in'); }});
     });
-    setTimeout(function(){
-      rv.forEach(function(el){ if(el.getBoundingClientRect().top<window.innerHeight*0.98) el.classList.add('in'); });
-    },3000);
+
+    /* 2 — titres de section : balayage masqué + montée */
+    g.utils.toArray('h2').forEach(function(h){
+      ST.create({trigger:h,start:'top 92%',once:true,onEnter:function(){
+        g.fromTo(h,{yPercent:42,autoAlpha:0,clipPath:'inset(0 0 100% 0)'},
+          {yPercent:0,autoAlpha:1,clipPath:'inset(0 0 0% 0)',duration:1,ease:'power4.out'});
+      }});
+    });
+
+    /* 3 — groupes sans .rv : étapes, FAQ, options, figures, stats */
+    g.utils.toArray('#steps .step').forEach(function(s,i){
+      ST.create({trigger:'#steps',start:'top 80%',once:true,onEnter:function(){
+        g.fromTo(s,{xPercent:-16,autoAlpha:0,rotation:-1.6},{xPercent:0,autoAlpha:1,rotation:0,duration:.75,ease:'power3.out',delay:i*0.09});
+      }});
+    });
+    g.utils.toArray('.faq details').forEach(function(d,i){
+      ST.create({trigger:d,start:'top 92%',once:true,onEnter:function(){
+        g.fromTo(d,{y:36,autoAlpha:0,clipPath:'inset(0 0 60% 0 round 13px)'},{y:0,autoAlpha:1,clipPath:'inset(0 0 0% 0 round 13px)',duration:.65,ease:'power2.out',delay:(i%4)*0.06});
+      }});
+    });
+    g.utils.toArray('.opt').forEach(function(o,i){
+      ST.create({trigger:'#grid',start:'top 88%',once:true,onEnter:function(){
+        g.fromTo(o,{y:28,scale:.92,autoAlpha:0,rotation:i%2?1.4:-1.4},{y:0,scale:1,autoAlpha:1,rotation:0,duration:.6,ease:'back.out(1.7)',delay:i*0.08});
+      }});
+    });
+    g.utils.toArray('.fig').forEach(function(f){
+      ST.create({trigger:f,start:'top 90%',once:true,onEnter:function(){
+        g.fromTo(f,{scale:.9,y:34,autoAlpha:0},{scale:1,y:0,autoAlpha:1,duration:.9,ease:'power3.out'});
+      }});
+    });
+    g.utils.toArray('.stats .stat').forEach(function(s,i){
+      ST.create({trigger:'#stats',start:'top 92%',once:true,onEnter:function(){
+        g.fromTo(s,{y:34,autoAlpha:0,scale:.88},{y:0,autoAlpha:1,scale:1,duration:.6,ease:'back.out(1.7)',delay:i*0.08});
+      }});
+    });
 
     /* compteurs animés */
     if(counts.length){
@@ -645,51 +730,100 @@ function animateTo(el,to,fmt,dur){
 
     /* halo du hero : intensité asservie au scroll */
     if(glow){
-      ST.create({start:0,end:700,onUpdate:function(self){
-        glow.style.setProperty('--gi',(0.10+0.15*(1-self.progress)).toFixed(3));
+      ST.create({start:0,end:820,onUpdate:function(self){
+        glow.style.setProperty('--gi',(0.12+0.20*(1-self.progress)).toFixed(3));
       }});
     }
 
-    /* hero : timeline scrubée — la photo s'approfondit, le texte s'efface */
-    var heroPhoto=document.querySelector('header .photo img');
-    var tl=g.timeline({scrollTrigger:{trigger:'header',start:'top top',end:'bottom top',scrub:.6}});
-    if(heroPhoto) tl.to(heroPhoto,{scale:1.14,yPercent:-4,ease:'none'},0);
-    tl.to('header h1',{yPercent:-9,autoAlpha:.32,ease:'none'},0)
-      .to('header .sub',{yPercent:-6,autoAlpha:.38,ease:'none'},0)
-      .to('header .eyebrow',{autoAlpha:0,ease:'none'},0);
+    /* ---------- HERO : parallaxe multi-plans + timeline scrubée ---------- */
+    var heroImg=document.querySelector('header .photo img');
+    g.fromTo('header h1',{y:46,clipPath:'inset(0 0 100% 0)'},{y:0,clipPath:'inset(0 0 0% 0)',duration:1.1,ease:'power3.out',immediateRender:false});
+    g.fromTo('header .sub',{y:36,clipPath:'inset(0 0 100% 0)'},{y:0,clipPath:'inset(0 0 0% 0)',duration:1.1,ease:'power3.out',delay:.12,immediateRender:false});
+    if(heroImg){
+      g.fromTo(heroImg,{scale:1.3,yPercent:9,clipPath:'inset(0 0 100% 0 round 18px)'},
+        {scale:1,yPercent:0,clipPath:'inset(0 0 0% 0 round 18px)',duration:1.4,ease:'power3.out',immediateRender:false});
+    }
+    var heroTl=g.timeline({scrollTrigger:{trigger:'header',start:'top top',end:'bottom top',scrub:.6}});
+    if(heroImg) heroTl.fromTo(heroImg,{scale:1,yPercent:0},{scale:1.25,yPercent:-10,ease:'none'},0);
+    heroTl.fromTo('header .eyebrow',{yPercent:0,autoAlpha:1},{yPercent:-70,autoAlpha:0,ease:'none'},0)
+          .fromTo('header .logo',{yPercent:0,autoAlpha:1},{yPercent:-40,autoAlpha:.1,ease:'none'},0)
+          .fromTo('header h1',{yPercent:0,autoAlpha:1},{yPercent:-18,autoAlpha:.2,ease:'none'},0)
+          .fromTo('header .sub',{yPercent:0,autoAlpha:1},{yPercent:-12,autoAlpha:.25,ease:'none'},0)
+          .fromTo('header .photo',{yPercent:0},{yPercent:6,ease:'none'},0);
 
-    /* parallaxe multi-plans des photos (hors hero et hors scène épinglée) */
+    /* ---------- CHAQUE IMAGE : masque + zoom/parallaxe scrubée franche ---------- */
     g.utils.toArray('.photo img').forEach(function(img){
-      if(img.closest('header')||img.closest('#example')) return;
+      if(img.closest('header')||img.closest('#conv-card')) return;
       var frame=img.closest('.photo')||img;
-      g.fromTo(img,{yPercent:-5,scale:1.09},{yPercent:5,scale:1.09,ease:'none',
-        scrollTrigger:{trigger:frame,start:'top bottom',end:'bottom top',scrub:1.2,invalidateOnRefresh:true}});
+      g.fromTo(img,{clipPath:'inset(0 0 100% 0 round 18px)'},{clipPath:'inset(0 0 0% 0 round 18px)',duration:1,ease:'power3.out',
+        immediateRender:false,scrollTrigger:{trigger:frame,start:'top 88%',once:true}});
+      g.fromTo(img,{yPercent:-8,scale:1.18},{yPercent:8,scale:1.26,ease:'none',
+        scrollTrigger:{trigger:frame,start:'top bottom',end:'bottom top',scrub:1,invalidateOnRefresh:true}});
     });
 
-    /* scènes épinglées (desktop uniquement) : pin + scrub,
-       dont une section qui glisse par-dessus la précédente */
+    /* ---------- CONVERSION : le XML à gauche se révèle, puis le document lisible ---------- */
+    var conv=document.getElementById('conv-card');
+    if(conv){
+      var cphoto=conv.querySelector('.photo');
+      var cimg=conv.querySelector('.photo img');
+      if(cphoto){
+        g.fromTo(cphoto,{clipPath:'inset(0 100% 0 0 round 18px)'},{clipPath:'inset(0 0% 0 0 round 18px)',ease:'none',
+          scrollTrigger:{trigger:cphoto,start:'top 88%',end:'+=75%',scrub:1,invalidateOnRefresh:true}});
+      }
+      if(cimg){
+        g.fromTo(cimg,{scale:1.28,yPercent:6},{scale:1.2,yPercent:-6,ease:'none',
+          scrollTrigger:{trigger:conv,start:'top bottom',end:'bottom top',scrub:1.2,invalidateOnRefresh:true}});
+      }
+    }
+
+    /* ---------- BANDE HORIZONTALE pilotée par le scroll ---------- */
+    var band=document.getElementById('hband');
+    var track=band?band.querySelector('.hband-track'):null;
+    function bandDist(){ return track?Math.max(0,track.scrollWidth-band.clientWidth):0; }
+    if(band&&track){
+      band.style.overflow='hidden';
+      g.utils.toArray('#hband .hb-item img').forEach(function(im){
+        g.fromTo(im,{yPercent:-9,scale:1.18},{yPercent:9,scale:1.18,ease:'none',
+          scrollTrigger:{trigger:band,start:'top bottom',end:'bottom top',scrub:1.4,invalidateOnRefresh:true}});
+      });
+    }
+
+    /* ---------- SCÈNES ÉPINGLÉES + bande pincée (desktop) ---------- */
     var mm=g.matchMedia();
     mm.add('(min-width:900px)',function(){
       var steps=document.getElementById('steps');
       var receive=document.getElementById('receive');
       if(steps){
-        ST.create({trigger:steps,start:'top 14%',end:'+=92%',pin:true,pinSpacing:false,
+        ST.create({trigger:steps,start:'top 12%',end:'+=115%',pin:true,pinSpacing:false,
           anticipatePin:1,invalidateOnRefresh:true,scrub:true});
+        g.fromTo(steps,{scale:.93,rotationX:7,transformPerspective:1000},{scale:1,rotationX:0,ease:'none',
+          immediateRender:false,scrollTrigger:{trigger:steps,start:'top 12%',end:'+=115%',scrub:1,invalidateOnRefresh:true}});
       }
       if(receive && steps){
-        g.fromTo(receive,{yPercent:7,scale:.965,autoAlpha:.45},{yPercent:0,scale:1,autoAlpha:1,ease:'none',
-          scrollTrigger:{trigger:steps,start:'top 14%',end:'+=92%',scrub:1}});
+        g.fromTo(receive,{yPercent:10,scale:.94,autoAlpha:.3},{yPercent:0,scale:1,autoAlpha:1,ease:'none',
+          immediateRender:false,scrollTrigger:{trigger:steps,start:'top 12%',end:'+=115%',scrub:1}});
       }
       var example=document.getElementById('example');
       if(example){
         var exPhoto=example.querySelector('.photo img');
-        g.timeline({scrollTrigger:{trigger:example,start:'top 18%',end:'+=70%',
-          pin:true,anticipatePin:1,invalidateOnRefresh:true,scrub:1}})
-          .fromTo(example.querySelector('.rv'),{xPercent:-6,autoAlpha:.4},{xPercent:0,autoAlpha:1,ease:'none'},0);
+        var exText=example.querySelector('.rv');
+        g.timeline({scrollTrigger:{trigger:example,start:'top 16%',end:'+=85%',pin:true,anticipatePin:1,invalidateOnRefresh:true,scrub:1}})
+          .fromTo(exText,{xPercent:-9,autoAlpha:.3,rotation:-1.2},{xPercent:0,autoAlpha:1,rotation:0,ease:'none',immediateRender:false},0);
         if(exPhoto){
-          g.fromTo(exPhoto,{yPercent:-6,scale:1.09},{yPercent:6,scale:1.09,ease:'none',
+          g.fromTo(exPhoto,{yPercent:-8,scale:1.18},{yPercent:8,scale:1.24,ease:'none',
             scrollTrigger:{trigger:example,start:'top bottom',end:'bottom top',scrub:1.2,invalidateOnRefresh:true}});
         }
+      }
+      if(band&&track){
+        g.to(track,{x:function(){ return -bandDist(); },ease:'none',
+          scrollTrigger:{trigger:band,start:'top 22%',end:function(){ return '+='+(bandDist()+window.innerHeight*.8); },
+            scrub:1,pin:true,anticipatePin:1,invalidateOnRefresh:true}});
+      }
+    });
+    mm.add('(max-width:899px)',function(){
+      if(band&&track){
+        g.to(track,{x:function(){ return -bandDist(); },ease:'none',
+          scrollTrigger:{trigger:band,start:'top 85%',end:'bottom top',scrub:1,invalidateOnRefresh:true}});
       }
     });
 
@@ -698,6 +832,13 @@ function animateTo(el,to,fmt,dur){
     [].slice.call(document.images).forEach(function(img){
       if(!img.complete) img.addEventListener('load',function(){ ST.refresh(); });
     });
+
+    /* les pins créés après les autres déclencheurs décalent le document : on
+       re-trie par refreshPriority puis on recalcule pour que les déclencheurs
+       en aval (conversion, bande) tombent à la bonne distance de scroll */
+    if(ST.sort) ST.sort();
+    ST.refresh();
+    setTimeout(function(){ if(ST.sort) ST.sort(); ST.refresh(); },400);
 
     glowPointer();
   }
