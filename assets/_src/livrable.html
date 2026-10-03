@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  :root{--bg:#0e141c;--card:#16202c;--line:#24344a;--fg:#eaf0f8;--mut:#97a7bd;--acc:#3d8bff;--acc2:#2b6fe0;--ok:#3ddc97;--bad:#ff5d5d}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1400px;height:1000px;overflow:hidden}
+  body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;padding:26px 30px 22px}
+  .head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+  .head h1{font-size:1.02rem;font-weight:800;letter-spacing:.02em}
+  .head h1 span{color:var(--acc)}
+  .head .tag{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ok);border:1px solid rgba(61,220,151,.35);border-radius:20px;padding:3px 11px;font-weight:700}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;height:700px}
+  .panel{background:#0b1016;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .plabel{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--line);background:#0e1620}
+  .plabel .dot{width:9px;height:9px;border-radius:50%;background:#2b3a4d}
+  .plabel.before .dot{background:var(--bad)}
+  .plabel.after .dot{background:var(--ok)}
+  .plabel b{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+  .plabel.before b{color:var(--bad)}
+  .plabel.after b{color:var(--ok)}
+  .plabel .fn{margin-left:auto;font-size:.7rem;color:var(--mut);font-family:ui-monospace,Consolas,monospace}
+
+  /* ---- AVANT : XML brut ---- */
+  .code{padding:16px 18px;font-family:ui-monospace,Consolas,monospace;font-size:11.4px;line-height:1.72;color:#8ea3bd;white-space:pre;overflow:hidden;flex:1}
+  .code .tg{color:#6fa8ff}
+  .code .at{color:#c792ea}
+  .code .vl{color:#e0af68}
+  .code .cm{color:#4d5f78}
+  .code .hl{background:rgba(255,93,93,.13);border-radius:3px;padding:0 2px;color:#ffb0b0}
+  .brutnote{padding:9px 14px;border-top:1px solid var(--line);background:#12100f;font-size:.68rem;color:#ff9d9d;line-height:1.5}
+  .brutnote b{color:#ff5d5d}
+
+  /* ---- APRÈS : facture lisible ---- */
+  .paper{background:#fbfcfe;color:#1a2437;margin:14px 16px;border-radius:10px;padding:18px 20px;flex:1;box-shadow:0 8px 26px rgba(0,0,0,.35);display:flex;flex-direction:column;font-size:10.6px;line-height:1.5}
+  .p-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1a2437;padding-bottom:10px}
+  .p-top .doc{font-size:1.35rem;font-weight:800;letter-spacing:.06em}
+  .p-top .meta{text-align:right;font-size:9.6px;color:#4a5975;line-height:1.55}
+  .p-top .meta b{color:#1a2437;font-size:10.4px}
+  .p-badges{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .p-badges span{font-size:7.6px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;border-radius:20px;padding:2px 8px;background:#e8f0ff;color:#2b6fe0}
+  .p-badges span.g{background:#e3f8ef;color:#1c8a5c}
+  .p-parties{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:11px 0 10px}
+  .p-parties .blk{border-left:3px solid #2b6fe0;padding-left:9px}
+  .p-parties .blk.g{border-color:#1c8a5c}
+  .p-parties .lbl{font-size:7.6px;letter-spacing:.1em;text-transform:uppercase;color:#8593ab;font-weight:700;margin-bottom:3px}
+  .p-parties .nm{font-weight:800;font-size:11px;color:#1a2437}
+  .p-parties .sm{color:#4a5975;font-size:9.4px;line-height:1.5}
+  table{width:100%;border-collapse:collapse;margin-top:2px}
+  th{font-size:7.8px;letter-spacing:.08em;text-transform:uppercase;color:#8593ab;text-align:right;border-bottom:1px solid #d3dce8;padding:4px 0;font-weight:700}
+  th:first-child,td:first-child{text-align:left}
+  td{font-size:9.8px;padding:5.5px 0;border-bottom:1px solid #eef2f7;color:#2a3550}
+  td.r{text-align:right;font-variant-numeric:tabular-nums}
+  .tot{margin-top:9px;margin-left:auto;width:56%}
+  .tot .row{display:flex;justify-content:space-between;font-size:10px;padding:2.5px 0;color:#4a5975}
+  .tot .row.big{border-top:2px solid #1a2437;margin-top:4px;padding-top:6px;font-size:13px;font-weight:800;color:#1a2437}
+  .p-foot{margin-top:auto;padding-top:9px;border-top:1px dashed #cbd6e4;display:flex;justify-content:space-between;align-items:center;font-size:8.4px;color:#7a879d}
+  .p-foot .mentions{display:flex;gap:6px;flex-wrap:wrap}
+  .p-foot .m{background:#eef2f7;border-radius:20px;padding:2px 8px;color:#3d4b63;font-weight:600}
+
+  /* ---- bande archive ---- */
+  .arch{margin-top:18px;border:1px solid var(--line);border-radius:14px;background:#0b1016;padding:14px 18px;display:grid;grid-template-columns:1.25fr .95fr;gap:18px;align-items:center;height:150px}
+  .search{background:#0e1620;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;gap:9px;padding:9px 13px}
+  .search svg{flex:0 0 auto}
+  .search .q{color:var(--fg);font-size:.82rem}
+  .search .q b{color:var(--acc)}
+  .search .cur{width:1.5px;height:15px;background:var(--acc);margin-left:2px}
+  .res{display:flex;align-items:center;gap:12px;margin-top:10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#121a25}
+  .res .ic{width:30px;height:34px;border-radius:5px;background:#1b2736;border:1px solid #2d3f57;display:flex;align-items:center;justify-content:center;color:var(--acc);flex:0 0 auto}
+  .res .n{font-size:.8rem;font-weight:700;color:var(--fg)}
+  .res .d{font-size:.68rem;color:var(--mut);margin-top:2px}
+  .res .amt{margin-left:auto;text-align:right}
+  .res .amt b{font-size:.86rem;color:var(--fg)}
+  .res .amt span{display:block;font-size:.62rem;color:var(--ok);font-weight:700}
+  .arch .right{display:flex;gap:13px;align-items:flex-start;border-left:1px solid var(--line);padding-left:18px}
+  .lock{width:42px;height:42px;border-radius:11px;background:#0f2033;border:1px solid #234;display:flex;align-items:center;justify-content:center;color:var(--acc);flex:0 0 auto}
+  .arch .right b{display:block;font-size:.85rem;color:var(--fg);margin-bottom:4px}
+  .arch .right p{font-size:.72rem;color:var(--mut);line-height:1.55}
+  .arch .right .y{display:inline-block;margin-top:6px;font-size:.66rem;font-weight:700;color:var(--ok);border:1px solid rgba(61,220,151,.35);border-radius:20px;padding:2px 10px}
+  .exnote{position:absolute;top:-1px;right:-1px;background:#2b3a4d;color:#c7d3e3;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 12px;border-bottom-left-radius:9px;z-index:5}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>FactureDesk&nbsp;<span>— d'un fichier illisible à un document archivable</span></h1>
+    <span class="tag">Exemple illustré · données fictives</span>
+  </div>
+
+  <div class="cols">
+    <!-- ===== AVANT ===== -->
+    <div class="panel">
+      <div class="exnote">Exemple</div>
+      <div class="plabel before"><span class="dot"></span><b>Avant — le fichier reçu</b><span class="fn">FA-2026-0417.xml</span></div>
+      <div class="code"><span class="tg">&lt;ubl:Invoice</span> <span class="at">xmlns:ubl</span>=<span class="vl">"urn:oasis:...:ubl"</span><span class="tg">&gt;</span>
+  <span class="tg">&lt;cbc:CustomizationID&gt;</span><span class="vl">urn:cen.eu:en16931</span><span class="tg">&lt;/cbc:CustomizationID&gt;</span>
+  <span class="tg">&lt;cbc:ID&gt;</span><span class="vl">FA-2026-0417</span><span class="tg">&lt;/cbc:ID&gt;</span>
+  <span class="tg">&lt;cbc:IssueDate&gt;</span><span class="vl">2026-09-12</span><span class="tg">&lt;/cbc:IssueDate&gt;</span>
+  <span class="tg">&lt;cbc:DueDate&gt;</span><span class="vl">2026-10-12</span><span class="tg">&lt;/cbc:DueDate&gt;</span>
+  <span class="tg">&lt;cbc:InvoiceTypeCode&gt;</span><span class="vl">380</span><span class="tg">&lt;/cbc:InvoiceTypeCode&gt;</span>
+  <span class="tg">&lt;cac:AccountingSupplierParty&gt;</span>
+    <span class="tg">&lt;cac:Party&gt;</span>
+      <span class="tg">&lt;cac:PartyName&gt;&lt;cbc:Name&gt;</span><span class="vl">Atelier Lumen</span><span class="tg">&lt;/cbc:Name&gt;&lt;/cac:PartyName&gt;</span>
+      <span class="tg">&lt;cac:PartyTaxScheme&gt;</span>
+        <span class="tg">&lt;cbc:CompanyID&gt;</span><span class="vl">FR42913476208</span><span class="tg">&lt;/cbc:CompanyID&gt;</span>
+      <span class="tg">&lt;/cac:PartyTaxScheme&gt;</span>
+    <span class="tg">&lt;/cac:Party&gt;</span>
+  <span class="tg">&lt;/cac:AccountingSupplierParty&gt;</span>
+  <span class="tg">&lt;cac:TaxTotal&gt;&lt;cbc:TaxAmount</span> <span class="at">currencyID</span>=<span class="vl">"EUR"</span><span class="tg">&gt;</span><span class="vl">542.00</span><span class="tg">&lt;/cbc:TaxAmount&gt;&lt;/cac:TaxTotal&gt;</span>
+  <span class="tg">&lt;cac:LegalMonetaryTotal&gt;</span>
+    <span class="tg">&lt;cbc:TaxExclusiveAmount&gt;</span><span class="vl">2710.00</span><span class="tg">&lt;/cbc:TaxExclusiveAmount&gt;</span>
+    <span class="tg">&lt;cbc:TaxInclusiveAmount&gt;</span><span class="hl">3252.00</span><span class="tg">&lt;/cbc:TaxInclusiveAmount&gt;</span>
+  <span class="tg">&lt;/cac:LegalMonetaryTotal&gt;</span>
+  <span class="tg">&lt;cac:InvoiceLine&gt;</span>
+    <span class="tg">&lt;cbc:InvoicedQuantity</span> <span class="at">unitCode</span>=<span class="vl">"C62"</span><span class="tg">&gt;</span><span class="vl">1</span><span class="tg">&lt;/cbc:InvoicedQuantity&gt;</span>
+    <span class="tg">&lt;cbc:LineExtensionAmount&gt;</span><span class="vl">1850.00</span><span class="tg">&lt;/cbc:LineExtensionAmount&gt;</span>
+  <span class="tg">&lt;/cac:InvoiceLine&gt;</span>
+  <span class="cm">&lt;!-- 3 lignes · 1 mention TVA · 0 mise en page --&gt;</span>
+<span class="tg">&lt;/ubl:Invoice&gt;</span></div>
+      <div class="brutnote"><b>Personne n'ouvre ça.</b> Un XML de 42 Ko, sans mise en page : ni fournisseur lisible, ni montant aligné, ni mention en clair. C'est pourtant la facture que l'administration considère comme reçue.</div>
+    </div>
+
+    <!-- ===== APRÈS ===== -->
+    <div class="panel">
+      <div class="exnote">Exemple</div>
+      <div class="plabel after"><span class="dot"></span><b>Après — avec FactureDesk</b><span class="fn">FA-2026-0417.pdf</span></div>
+      <div class="paper">
+        <div class="p-top">
+          <div>
+            <div class="doc">FACTURE</div>
+            <div class="p-badges"><span>Factur-X · EN16931</span><span class="g">PDF lisible</span><span class="g">mentions extraites</span></div>
+          </div>
+          <div class="meta"><b>N° FA-2026-0417</b><br>Date : 12/09/2026<br>Échéance : 12/10/2026<br>Code 380 — facture</div>
+        </div>
+
+        <div class="p-parties">
+          <div class="blk">
+            <div class="lbl">Fournisseur</div>
+            <div class="nm">Atelier Lumen — SARL</div>
+            <div class="sm">14 rue des Tanneurs, 59000 Lille<br>SIREN 913 476 208 · RCS Lille<br>TVA FR 42 913476208<br>contact@atelier-lumen.fr</div>
+          </div>
+          <div class="blk g">
+            <div class="lbl">Client</div>
+            <div class="nm">Bois &amp; Co — Menuiserie</div>
+            <div class="sm">8 chemin des Saules, 59200 Tourcoing<br>SIREN 842 119 505<br>TVA FR 30 842119505</div>
+          </div>
+        </div>
+
+        <table>
+          <thead><tr><th>Désignation</th><th>Qté</th><th>P.U. HT</th><th>Montant HT</th></tr></thead>
+          <tbody>
+            <tr><td>Prestation de menuiserie sur mesure</td><td class="r">1</td><td class="r">1 850,00 €</td><td class="r">1 850,00 €</td></tr>
+            <tr><td>Fourniture chêne massif (ml)</td><td class="r">2</td><td class="r">240,00 €</td><td class="r">480,00 €</td></tr>
+            <tr><td>Pose et finition sur site</td><td class="r">1</td><td class="r">380,00 €</td><td class="r">380,00 €</td></tr>
+          </tbody>
+        </table>
+
+        <div class="tot">
+          <div class="row"><span>Total HT</span><span>2 710,00 €</span></div>
+          <div class="row"><span>TVA 20 %</span><span>542,00 €</span></div>
+          <div class="row big"><span>Total TTC</span><span>3 252,00 €</span></div>
+        </div>
+
+        <div class="p-foot">
+          <div class="mentions"><span class="m">Fournisseur</span><span class="m">SIREN</span><span class="m">TVA</span><span class="m">Montants</span><span class="m">Échéance</span></div>
+          <span>Facture convertie depuis l'UBL d'origine</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== bande ARCHIVE ===== -->
+  <div class="arch">
+    <div>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="#3d8bff" stroke-width="2"/><path d="M15 15 L21 21" stroke="#3d8bff" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="q">Atelier Lumen&nbsp;<span class="cur"></span></div>
+      </div>
+      <div class="res">
+        <div class="ic"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z" fill="none" stroke="#3d8bff" stroke-width="1.8"/><path d="M14 3 V8 H19" fill="none" stroke="#3d8bff" stroke-width="1.8"/><path d="M9 13 H16 M9 16.5 H14" stroke="#3d8bff" stroke-width="1.6"/></svg></div>
+        <div>
+          <div class="n">FA-2026-0417 — Atelier Lumen</div>
+          <div class="d">Reçue le 12/09/2026 · 3 lignes · original UBL joint</div>
+        </div>
+        <div class="amt"><b>3 252,00 €</b><span>retrouvé en 3 clics</span></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="lock"><svg width="20" height="20" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2.5" fill="none" stroke="#3d8bff" stroke-width="1.9"/><path d="M8 10 V7 a4 4 0 0 1 8 0 V10" fill="none" stroke="#3d8bff" stroke-width="1.9"/><circle cx="12" cy="15.5" r="1.6" fill="#3ddc97"/></svg></div>
+      <div>
+        <b>L'original structuré conservé intact</b>
+        <p>Le fichier Factur-X/UBL d'origine reste horodaté, tel quel, à côté du document lisible — recherchable par fournisseur, montant ou période.</p>
+        <span class="y">8 ans — jusqu'au 12/09/2034</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
