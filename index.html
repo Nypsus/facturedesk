@@ -144,6 +144,22 @@ header>*{position:relative;z-index:1}
 @media(max-width:720px){.hb-item img{height:205px}}
 </style>
 <noscript><style>.rv,.rv-stagger>*{opacity:1!important;transform:none!important;clip-path:none!important}#prog{display:none}</style></noscript>
+<style id="mf-ctl-css">#motion-ctl{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:2147483000;font:600 13px/1 'Segoe UI',system-ui,sans-serif}
+#motion-ctl button{background:linear-gradient(135deg,#3d8bff,#2b6fe0);color:#fff;border:none;border-radius:22px;padding:11px 20px;cursor:pointer;box-shadow:0 8px 26px rgba(61,139,255,.45)}
+#motion-ctl button:hover{filter:brightness(1.08)}</style>
+<script id="mf-ctl-js">
+(function(){
+ var mf=(function(){try{return localStorage.getItem('motion_force')==='1'}catch(e){return false}})();
+ var rm=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+ if(mf&&rm){try{for(var s=0;s<document.styleSheets.length;s++){var sh=document.styleSheets[s],rules;try{rules=sh.cssRules}catch(e){continue}if(!rules)continue;
+  for(var i=rules.length-1;i>=0;i--){var r=rules[i];var txt=(r.media&&r.media.mediaText)||'';if(txt.indexOf('prefers-reduced-motion')>-1){for(var j=r.cssRules.length-1;j>=0;j--){try{r.deleteRule(j)}catch(e){}}}}}}catch(e){}}
+ function ctl(){var d=document.createElement('div');d.id='motion-ctl';
+  d.innerHTML='<button type="button" title="Vous pouvez recouper les animations">'+(mf?'\u2715 Couper les animations':'\u25B6 Activer les animations')+'</button>';
+  d.querySelector('button').onclick=function(){try{if(mf){localStorage.removeItem('motion_force')}else{localStorage.setItem('motion_force','1')}}catch(e){};location.reload();};
+  document.body.appendChild(d);}
+ if(rm||mf){if(document.body){ctl()}else{document.addEventListener('DOMContentLoaded',ctl)}}
+})();
+</script>
 </head>
 <body>
 <div id="prog" aria-hidden="true"></div>
@@ -553,7 +569,7 @@ function signup(e){
    halo de hero. Replis : sans GSAP → IntersectionObserver ; sans JS ou
    prefers-reduced-motion → contenu immédiatement visible (CSS + <noscript>).
    ========================================================================== */
-var FDK_REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+var __mf=(function(){try{return localStorage.getItem('motion_force')==='1'}catch(e){return false}})();var FDK_REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) && !__mf;
 function animateTo(el,to,fmt,dur){
   if(!el) return;
   fmt=fmt||function(v){ return String(Math.round(v)); };
